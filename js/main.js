@@ -1,42 +1,55 @@
 // Declare global variables
 let humanScore = 0;
 let computerScore = 0;
+const buttons = document.querySelectorAll("button");
+const match = document.querySelector("#match");
+const selections = document.querySelector("#selections");
+const result = document.querySelector("#result");
+const score = document.querySelector("#score");
 
 // Game loop's logic
 function playGame() {
-    for (let i = 0; i < 5; i++) {
-        const humanSelection = getHumanChoice();
-        const computerSelection = getComputerChoice();
-    
-        playRound(humanSelection, computerSelection);
-    }
-
-    if (humanScore === computerScore) {
-        console.log("GAME OVER: The game is a tie!");
-    } else if (humanScore > computerScore) {
-        console.log("GAME OVER: The player win the game!");
-    } else {
-        console.log("GAME OVER: The computer win the game!");
-    }
+    // Add the event listener to play the round
+    buttons.forEach((button) => {
+        button.addEventListener("click", (e) => {
+                const computerSelection = getComputerChoice();
+            playRound(button.id, computerSelection);
+        });
+    });
 }
 
 // Round's logic
 function playRound(humanChoice, computerChoice) {
-    console.log('Player picked: ', humanChoice);
-    console.log('Computer picked: ', computerChoice);
+    // Show the the player/computer's selection
+    selections.textContent = `(Player) -> ${humanChoice} VS ${computerChoice} <- (CPU)`
+    match.appendChild(selections);
 
+    // Show the result
     if (humanChoice === computerChoice) {
-        console.log("This round it's a tie");
+        result.textContent = "This round it's a tie";
     } else if ((humanChoice === "rock" && computerChoice === "scissor") || (humanChoice === "paper" && computerChoice === "rock") || (humanChoice === "scissor" && computerChoice === "paper")) {
-        console.log("YOU WIN! ", humanChoice, " beats ", computerChoice);
+        result.textContent = `YOU WIN! ${humanChoice} beats ${computerChoice}`;
         humanScore += 1;
     } else {
-        console.log("YOU LOSE! ", computerChoice, " beats ", humanChoice);
+        result.textContent = `YOU LOSE! ${computerChoice} beats ${humanChoice}`;
         computerScore += 1;
     }
+    match.appendChild(result);
 
-    console.log("Player Score: ", humanScore);
-    console.log("Computer Score: ", computerScore);
+    // Show the actual score
+    score.innerHTML = `<br>Your Score: ${humanScore} |----------| CPU Score: ${computerScore}`;
+
+    match.appendChild(score);
+
+    if (humanScore === 5 || computerScore === 5) {
+        const winner = document.createElement("div");
+        if (humanScore === 5) {
+            winner.innerHTML = "<br>YOU WIN THE GAME"
+        } else {
+            winner.innerHTML = "<br>THE CPU WIN THE GAME"
+        }
+        match.appendChild(winner);
+    }
 }
 
 // Get the computer's choice
@@ -57,14 +70,6 @@ function getComputerChoice() {
             break;
     }
     return computerChoice;
-}
-
-// Get the player's choice
-function getHumanChoice() {
-    let humanChoice = prompt('Please, write your choice (Rock, Paper or Scissor):');
-    humanChoice = humanChoice.toLowerCase();
-
-    return humanChoice;
 }
 
 playGame();
